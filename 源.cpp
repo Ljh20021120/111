@@ -1,186 +1,246 @@
-#include <graphics.h> 
-#include <conio.h>
-#include<stdio.h>
+﻿#include<stdio.h>
+#include<graphics.h>
+#include<time.h>
 #include<bangtal.h>
 
 
 
-typedef enum { UP, DOWN, LEFT, RIGHT, UNKOWN } DRCT;
+SceneID scene1；;
 
-const int level = 5;
+ObjectID startButton；;
 
-DRCT getKey()
+IMAGE img[9]; 
+
+int picture[3][3] = { 1，2，3，4，5，6，7，8，0 }；
+
+void Rand（）
 {
-	char key;
-	DRCT ret;
-	key = _getch();
+	int anum；
+	int size = 9；
+	int a[9] = {0，1，2，3，4，5，6，7，8}；
 
-	switch (key)
+	for（int i = 0； i＜3；i++）
 	{
-	case 'a':
-	case 'A':
-		ret = LEFT;
-		break;
-	case 's':
-	case 'S':
-		ret = DOWN;
-		break;
-	case 'd':
-	case 'D':
-		ret = RIGHT;
-		break;
-	case 'w':
-	case 'W':
-		ret = UP;
-		break;
-	default:
-		ret = UNKOWN;
-		break;
+		for（int j = 0；j＜3；j++）
+	{
+		anum = rand（） % size；
+		picture[i][j] = a[anum]；
 
-	}
-
-	return ret;
+	 for（int k =anum；k ＜ size；k++）
+	{
+		a[k] = a[k+1]；
+}
+    size--；
+}
+}
 }
 
-void drawImage(int layout[level][level], IMAGE* pimg)
+
+
+
+
+
+
+
+void GameInit（）
 {
-	int w, h;
-	w = h = pimg->getwidth() / level;
+	Rand（）；
 
-	int x1, y1, x2, y2;
 
-	setcolor(RGB(255, 255, 255));
-	setfillcolor(RGB(0, 0, 0));
+	loadimage（ & img[0]，L"0.png"，400，200）；
+	loadimage（ & img[1]，L"1.png"，400，200）；
+	loadimage（ & img[2]，L"2.png"，400，200）；
+	loadimage（ & img[3]，L"3.png"，400，200）；
+	loadimage（ & img[4]，L"4.png"，400，200）；
+	loadimage（ & img[5]，L"5.png"，400，200）；
+	loadimage（ & img[6]，L"6.png"，400，200）；
+	loadimage（ & img[7]，L"7.png"，400，200）；
+	loadimage（ & img[8]，L"8.png"，400，200）；
+}
 
-	for (int i = 0; i < level; ++i)
+void mousecallbcak(ObjictID object, int x, int y, MouseAction action) {
+	if (object == startButton) {
+		endGame();
+	}
+}
+
+
+
+
+
+void DrawPicture()
+{
+	for (int i = 0; i＜3；i++)
 	{
-		for (int j = 0; j < level; ++j)
+		for（int j =0；j＜3；j++）
 		{
-			x1 = j * w;
-			y1 = i * h;
+			switch（picture[i][j]）
+			{
+		     case 0 ：
+			 putimage（i * 400，j* 200，&img[0]）；
+			 break ；
+			 case 1 ：
+			 putimage（i * 400， j* 200，&img[8]） ；
+			 break ；
+			 case 2 ：
+			 putimage（i * 400，j * 200， & img[3]）；
+			 break ；
+			 case 3 ：
+			 putimage（i * 400， j * 200， & img[6]） ；
+			 break ；
+			 case 4 ：
+			 putimage（i * 400，j * 200， & img[1]）；
+			 break ；
+			 case 5 ：
+			 putimage（i * 400， j * 200， & img[4]） ；
+			 break ；
+			 case 6 ：
+			 putimage（i * 400，j * 200， & img[7]）；
+			 break ；
+			 case 7 ：
+			 putimage（i * 400， j * 200， & img[2]）；
+			 break ；
+			 case 8 ：
+			 putimage（i * 400， j * 200，& img [5]） ；
+			 break ；
 
-			if (layout[i][j] != -1)
-			{
-				x2 = layout[i][j] % level * w;
-				y2 = layout[i][j] / level * h;
-				putimage(x1, y1, w, h, pimg, x2, y2);
-			}
-			else
-			{
-				fillrectangle(x1, y1, x1 + w, y1 + h);
-			}
+
+			default ：
+			     break ；
+
+            }
 		}
 	}
-
-	for (int i = 1; i < level; ++i)
-	{
-		line(0, i * h, pimg->getwidth(), i * h);
-	}
-
-	for (int i = 1; i < level; ++i)
-	{
-		line(i * w, 0, i * w, pimg->getheight());
-	}
 }
 
-int isGameOver(int layout[level][level])
+
+
+
+
+
+
+
+void PlayGame（）
 {
-	for (int i = 0; i < level; i++)
+	int row， col；
+	int zeroR，zeroC；
+
+
+
+	MOUSEMSG msg；
+
+	msg = GetMouseMsg（）；
+
+	switch (msg.uMsg)
 	{
-		for (int j = 0; j < level; j++)
+	case WM_LBUTTIONDOWN :
+
+		if （msg.x ＞=0 && msg.x ＜400）
 		{
-			if (!(i == level - 1 && j == level - 1))
+			row = 0；
+		}
+		else if （msg.x ＞= 400 && msg.x＜ 800）
+		{
+			row = 1；
+		}
+		else if（msg.x ＞=800 && msg.x ＜= 1200）
+		{
+			row = 2；
+		}
+
+		if（msg.y ＞=0 && msg.y ＜200）
+		{
+			col = 0 ；
+         }
+		else if（msg.y ＞=200 && msg.y ＜400）
+		{
+		   col = 1；
+         }
+		 else if（msg.y＞= 400 && msg.y ＜= 600）
+		 {
+		   col = 2；
+         }
+
+
+		 for（int i = 0 ；i ＜ 3；i++）
+		 {
+		    for （int j = 0；j ＜ 3；j++）
 			{
-				if (layout[i][j] != i * level + j)
+				if（picture[i][j] == 0）
 				{
-					return 0;
-				}
+					zeroR = i；
+					zeroC = j；
+			    }
 			}
-		}
-	}
+         }
 
-	return 1;
-}
-int updateLayout(int layout[level][level], DRCT d)
-{
-	int x = 0, t = 0;
+		 if （row == zeroR && col == zeroC - 1）
+		 {
+			 picture[zeroR][zeroC] = picture[row][col]；
+			 picture[row][col] = 0；
+		 }
+
+		 if（row ==zeroR && col == zeroC + 1）
+		 {
+			 picture[zeroR][zeroC] = picture[row][col]；
+			 picture[row][col] = 0；
+		 }
+
+		 if（row == zeroR - 1 && col ==zeroC）
+		 {
+			 picture[zeroR][zeroC] = picture[row][col]；
+			 pictur[row][col] = 0；
+		 }
 
 
-	int row, col, i, j, a, b;
-	for (i = 0; i < level; i++)
-	{
-		for (j = 0; j < level; j++)
-		{
-			if (layout[i][j] == -1)
-			{
-				a = i;
-				b = j;
-			}
-		}
-	}
-	switch (d)
-	{
-	case UP: { row = a + 1; col = b; break; }
-	case DOWN: { row = a - 1; col = b; break; }
-	case LEFT: { row = a; col = b + 1; break; }
-	case RIGHT: { row = a; col = b - 1; break; }
-	default: {row = a, col = b; break; }
+		 if（row ==zeroR + 1 && col ==zeroC）
+		 {
+			 picture[zeroR][zeroC] = picture[row][col]；
+			 picture[row][col] = 0；
+		 }
+
+			 break ；
 	}
 	
-	if (row<0 || row>level - 1 || col<0 || col>level - 1)
-	{
-		x = 0;
-	}
-	else
-	{
-		x = 1;
-		t = layout[a][b];
-		layout[a][b] = layout[row][col];
-		layout[row][col] = t;
-	}
-	
-	return x;
 }
 
-int main()
+
+
+int main（）
 {
-	int layout[level][level] =
+	setMouseCallback（mousecallback）；
+	scene1 = createScene（"퍼즐 맞추기 게임","background.png"）；
+
+	startGame（scene1）；
+
+
+	srand（（unsigned int）time（NULL））；
+	initgraph（1200，600）；
+	GameInit（）；
+
+	while（1）
 	{
-	0,1,2,3,4,
-	5,6,7,8,9,
-	10,11,12,13,14,
-	15,16,17,18,19,
-	20,21,-1,22,23
-	};
+		DrawPicture（）；
+		PlayGame（）；
+    }
 
 
-	initgraph(850, 500); 
 
-	IMAGE img, imgTip;
-	loadimage(&img, _T("./image/0.png")); 
-	loadimage(&img, _T("./image/1.png"));
-	loadimage(&img, _T("./image/2.png"));
-	loadimage(&img, _T("./image/3.png"));
-	loadimage(&img, _T("./image/4.png"));
-	loadimage(&img, _T("./image/5.png"));
-	loadimage(&img, _T("./image/6.png"));
-	loadimage(&img, _T("./image/7.png"));
-	loadimage(&img, _T("./image/8.png"));
-	loadimage(&imgTip, _T("./image/0.png"), 200, 200);
-	drawImage(layout, &img);
-	putimage(650, 0, &imgTip);
 
-	while (!isGameOver(layout))
-	{
-		DRCT d = getKey();
 
-		
-		if (updateLayout(layout, d))
-			drawImage(layout, &img);
-	}
-	putimage(0, 0, &img);
-	outtextxy(100, 50, _T("good"));
 
-	_getch();
-	closegraph(); 
+
+	getchar（）；
+	closegraph（）；
+	return 0；
 }
+
+
+
+
+
+
+
+
+
+
